@@ -1,0 +1,111 @@
+{% extends 'base1.html' %}
+{% block style %}
+    .active{
+
+    background-color:red;
+
+    }
+{% endblock %}
+{% block content %}
+    <h2>输入验证码今日签到：</h2>
+    <form method="POST" id="form-yanzheng">
+    <div>
+    <input type="text" id="yanzheng" name="yanzhe">
+    <input type="button" id="qiandao" value="签到" style="font-size: 15px;background-color: white;color: dodgerblue;">
+    <span id="error"></span>
+    </div>
+    </form>
+<h2>我的班级：</h2>
+    {% if nid == 0 %}
+    <div>
+    <a href="/sign/0" class="active">全部</a>
+    {% for row in obj %}
+        <a href="/sign/{{ row.Class_id_id }}" style="font-size: 15px;">{{ row.Class_id.classname }}</a>
+    {% endfor %}
+    </div>
+        {% else %}
+         <div>
+    <a href="/sign/0" >全部</a>
+    {% for row in obj %}
+        {% if row.Class_id_id == nid %}
+        <a href="/sign/{{ row.Class_id_id }}" style="font-size: 15px;" class="active">{{ row.Class_id.classname }}</a>
+            {% else %}
+             <a href="/sign/{{ row.Class_id_id }}" style="font-size: 15px;">{{ row.Class_id.classname }}</a>
+
+        {% endif %}
+    {% endfor %}
+    </div>
+    {% endif %}
+   <h1>筛选：</h1>
+    <div>
+    <label style="font-size: 20px;">日期和时间：</label>
+    <form action="/sign/{{ nid }}" method="POST">
+    {% csrf_token %}
+    <input name="time" id="time" type="date" >
+    <input type="submit" value="查询" style="font-size: 15px;background-color: white;color: dodgerblue;">
+    </form>
+    </div>
+<h2>考勤信息：</h2>
+<table border="1">
+    <thead>
+    <tr>
+        <th>班级</th>
+        <th>日期</th>
+        <th>签到时间</th>
+        <th>学生姓名</th>
+        <th>学生电话</th>
+        <th>考勤状态</th>
+    </tr>
+    </thead>
+ <tbody>
+ {% for row in obj2%}
+ <tr>
+ <td>{{ row.class_id.classname }}</td>
+    <td>{{ row.signtime|date:'Y-m-d' }}</td>
+     <td>{{ row.signtime|date:'h:m:s' }}</td>
+     <td>{{ row.Student_id.realname}}</td>
+     <td>{{ row.Student_id.phone }}</td>
+      <td>{{ row.s.stasus }}</td>
+
+
+ </tr>
+  {% endfor %}
+ </tbody>
+
+</table>
+
+{% endblock %}
+{% block script %}
+<script type="text/javascript" src="/static/js/jquery-1.12.4.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.cookie.js"></script>
+    <script>
+    $('#qiandao').click(function () {
+{#        console.log($('#yanzheng').val());#}
+        $.ajax({
+            url:'/kaonqing/qinadao/',
+          data:{'yanzheng':$('#yanzheng').val(),'nid':{{nid}}},
+          type:'POST',
+{#          datatype:'JSON',#}
+          traditional:true,
+          headers:{'X-CSRFtoken':$.cookie('csrftoken')},
+          success:function (data) {
+                var obj=JSON.parse(data);
+                if (obj.status){
+                  $('#error').text(obj.error);
+{#                  location.reload();#}
+
+
+
+
+              }
+              else{
+                              $('#error').text(obj.error);
+                          }
+
+          }
+
+        })
+
+    })
+    </script>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+   <h1>授课班级</h1>
+    <div>
+     <table border="2">
+         <thead>
+         <tr>
+             <td>班级
+             </td>
+             <td>操作</td>
+         </tr>
+         </thead>
+         <tbody>
+         {% for row in c %}
+         <tr>
+             <td>
+                 {{ row.classname }}
+
+             </td>
+             <td><a href="/classroom/{{ row.id }}/">进入查看考勤情况</a> <a href="/students/{{ row.id }}/">查看班级学生信息名单</a></td>
+{#              <td><a href="#">查看班级学生信息名单</a></td>#}
+         </tr>
+         {% endfor %}
+         </tbody>
+     </table>
+    </div>
+{% endblock %}

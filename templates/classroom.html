@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>生成随机验证码开始今日考勤:</h1>
+    <form method="POST" id="form-yanzhengma" action="/classroom/yanzheng/">
+  <div>
+
+      <input type="button" value="生成验证码" name="shencheng" id="shencheng" style="font-size: 15px;background-color: white;color: dodgerblue;">
+     <span id="yanzheng" style="font-size: 20px;color: #5bc0de;" name="yanzheng"></span>
+      <span id="error"></span>
+  </div>
+    </form>
+    <h1>筛选：</h1>
+    <label style="font-size: 20px;">日期和时间：</label>
+    <form action="/classroom/1/" method="POST">
+    {% csrf_token %}
+    <input name="time" id="time" type="date" >
+    <input type="submit" value="查询" style="font-size: 15px;background-color: white;color: dodgerblue;">
+    </form>
+<h1>签到表：</h1>
+<table border="1">
+    <thead>
+    <tr>
+        <th>日期</th>
+        <th>签到时间</th>
+        <th>学生姓名</th>
+        <th>学生电话</th>
+        <th>考勤状态</th>
+        <td>操作</td>
+    </tr>
+    </thead>
+ <tbody>
+ {% for row in obj %}
+ <tr>
+    <td>{{ row.signtime|date:'Y-m-d' }}</td>
+     <td>{{ row.signtime|date:'h:m:s' }}</td>
+     <td>{{ row.Student_id.realname}}</td>
+     <td>{{ row.Student_id.phone }}</td>
+      <td>{{ row.s.stasus }}</td>
+ <td><a href="#">修改签到状态</a></td>
+
+ </tr>
+  {% endfor %}
+ </tbody>
+
+</table>
+
+{% endblock %}
+{% block script %}
+    <script type="text/javascript" src="/static/js/jquery-1.12.4.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.cookie.js"></script>
+  <script type="text/javascript">
+var date=new Date();
+var year=date.getFullYear();
+var month=("0"+(date.getMonth()+1)).slice(-2);
+var day=("0"+date.getDate()).slice(-2);
+var time=year+'-'+month+'-'+day;
+document.getElementById('time').value=time;
+  </script>
+    <script>
+    $('#shencheng').click(function () {
+        var r=Math.floor(Math.random()*89999+10000);
+        $('#yanzheng').text(r);
+     $.ajax({
+         url:'/classroom/yanzheng/',
+         data:{'r':r,'nid':{{ nid }}},
+         type:'post',
+         traditional:true,
+         headers:{'X-CSRFtoken':$.cookie('csrftoken')},
+         success:function (data) {
+             var obj = JSON.parse(data);
+             if (obj.status) {
+                 $('#error').text(obj.error);
+
+             }
+             else {
+                 $('#error').text(obj.error);
+             }
+
+         }
+          })
+    })
+
+
+
+
+    </script>
+{% endblock %}

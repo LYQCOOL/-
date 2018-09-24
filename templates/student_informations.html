@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h2>{{ obj.0.Class_id.classname}}学生名单:</h2>
+    <table border="1">
+    <thead>
+    <tr>
+        <td>学生姓名</td>
+        <td>邮箱</td>
+        <td>电话</td>
+    </tr>
+    </thead>
+    <tbody>
+    {% for row in obj %}
+    <tr>
+        <td>{{ row.Student_id.realname}}</td>
+        <td>{{ row.Student_id.email }}</td>
+    <td>{{ row.Student_id.phone }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+{% endblock %}
